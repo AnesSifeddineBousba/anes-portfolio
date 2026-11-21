@@ -8,23 +8,36 @@ export default function ParticlesBackground() {
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
     let animationId;
     let particles = [];
     let mouse = { x: null, y: null };
 
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const w = window.innerWidth || document.documentElement.clientWidth || 800;
+      const h = window.innerHeight || document.documentElement.clientHeight || 600;
+      canvas.width = w;
+      canvas.height = h;
     };
 
     resize();
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', resize, { passive: true });
 
     const handleMouseMove = (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
+      if (typeof e.clientX === 'number' && typeof e.clientY === 'number') {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      }
     };
-    window.addEventListener('mousemove', handleMouseMove);
+
+    const handleMouseLeave = () => {
+      mouse.x = null;
+      mouse.y = null;
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mouseleave', handleMouseLeave);
 
     class Particle {
       constructor() {
@@ -32,8 +45,10 @@ export default function ParticlesBackground() {
       }
 
       reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
+        const w = canvas.width || 800;
+        const h = canvas.height || 600;
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
         this.size = Math.random() * 2 + 0.5;
         this.speedX = (Math.random() - 0.5) * 0.5;
         this.speedY = (Math.random() - 0.5) * 0.5;
@@ -45,16 +60,22 @@ export default function ParticlesBackground() {
         this.x += this.speedX;
         this.y += this.speedY;
 
-        // Mouse interaction
+        // Mouse interaction with safe division
         if (mouse.x !== null && mouse.y !== null) {
           const dx = mouse.x - this.x;
           const dy = mouse.y - this.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 120) {
+          if (distance < 120 && distance > 0.1) {
             const force = (120 - distance) / 120;
             this.x -= (dx / distance) * force * 1.5;
             this.y -= (dy / distance) * force * 1.5;
           }
+        }
+
+        // Safety fallback if coordinate is NaN
+        if (isNaN(this.x) || isNaN(this.y)) {
+          this.reset();
+          return;
         }
 
         // Wrap around
@@ -65,6 +86,7 @@ export default function ParticlesBackground() {
       }
 
       draw() {
+        if (isNaN(this.x) || isNaN(this.y)) return;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         if (this.golden) {
@@ -76,26 +98,32 @@ export default function ParticlesBackground() {
       }
     }
 
-    // Create particles
-    const particleCount = Math.min(80, Math.floor((canvas.width * canvas.height) / 15000));
+    // Create particles based on viewport
+    const area = (canvas.width || 800) * (canvas.height || 600);
+    const particleCount = Math.min(80, Math.max(25, Math.floor(area / 16000)));
     for (let i = 0; i < particleCount; i++) {
       particles.push(new Particle());
     }
 
     function drawConnections() {
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
+      const len = particles.length;
+      for (let i = 0; i < len; i++) {
+        const p1 = particles[i];
+        if (isNaN(p1.x) || isNaN(p1.y)) continue;
+        for (let j = i + 1; j < len; j++) {
+          const p2 = particles[j];
+          if (isNaN(p2.x) || isNaN(p2.y)) continue;
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 150) {
-            const opacity = (1 - distance / 150) * 0.15;
+          if (distance < 140 && distance > 0.1) {
+            const opacity = (1 - distance / 140) * 0.14;
             ctx.beginPath();
             ctx.strokeStyle = `rgba(212, 168, 67, ${opacity})`;
             ctx.lineWidth = 0.5;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
             ctx.stroke();
           }
         }
@@ -103,12 +131,13 @@ export default function ParticlesBackground() {
     }
 
     function animate() {
+      if (!ctx || !canvas) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      particles.forEach((p) => {
-        p.update();
-        p.draw();
-      });
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
 
       drawConnections();
       animationId = requestAnimationFrame(animate);
@@ -120,6 +149,7 @@ export default function ParticlesBackground() {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, []);
 

@@ -34,7 +34,7 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex lg:hidden justify-center items-center"
+            className="flex lg:hidden justify-center items-center pb-16"
           >
             <TiltPhoto size="small" />
           </motion.div>
@@ -180,6 +180,7 @@ function TiltPhoto({ size = 'large' }) {
     const el = containerRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     const mouseX = e.clientX - centerX;
@@ -189,12 +190,14 @@ function TiltPhoto({ size = 'large' }) {
     const tiltX = -(mouseY / (rect.height / 2)) * maxTilt;
     const tiltY = (mouseX / (rect.width / 2)) * maxTilt;
 
-    rotateX.set(tiltX);
-    rotateY.set(tiltY);
+    if (isFinite(tiltX) && isFinite(tiltY)) {
+      rotateX.set(tiltX);
+      rotateY.set(tiltY);
+    }
 
-    // Glare position
-    const gx = ((e.clientX - rect.left) / rect.width) * 100;
-    const gy = ((e.clientY - rect.top) / rect.height) * 100;
+    // Glare position (clamped 0 to 100)
+    const gx = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    const gy = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
     glareX.set(gx);
     glareY.set(gy);
     glareOpacity.set(0.25);
@@ -215,7 +218,7 @@ function TiltPhoto({ size = 'large' }) {
   return (
     <div
       ref={containerRef}
-      className="relative cursor-none"
+      className="relative cursor-none select-none"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ perspective: 800 }}
@@ -245,7 +248,7 @@ function TiltPhoto({ size = 'large' }) {
           <motion.img
             src="/profile.jpg"
             alt="Anes Sif Eddine Bousba"
-            className="w-full h-full object-cover object-[center_20%] scale-125"
+            className="w-full h-full object-cover object-[center_20%] scale-125 pointer-events-none"
             style={{
               transform: useTransform(
                 [sRotateX, sRotateY],
@@ -271,9 +274,9 @@ function TiltPhoto({ size = 'large' }) {
           <div className="absolute inset-0 bg-gradient-to-t from-dark-900/40 via-transparent to-transparent pointer-events-none" />
         </div>
 
-        {/* Floating elements (3D depth) */}
+        {/* Floating elements (3D depth without backdrop-blur to avoid GPU shader conflicts inside preserve-3d) */}
         <motion.div
-          className="absolute -top-6 -right-6 w-12 h-12 rounded-lg bg-dark-200 border border-gold-500/20 flex items-center justify-center backdrop-blur-sm"
+          className="absolute -top-6 -right-6 w-12 h-12 rounded-lg bg-dark-200/90 border border-gold-500/20 flex items-center justify-center shadow-md shadow-black/40"
           animate={{ y: [-5, 5, -5] }}
           transition={{ duration: 4, repeat: Infinity }}
           style={{ transform: 'translateZ(40px)' }}
@@ -282,7 +285,7 @@ function TiltPhoto({ size = 'large' }) {
         </motion.div>
 
         <motion.div
-          className="absolute -bottom-4 -left-4 w-10 h-10 rounded-lg bg-dark-200 border border-gold-500/20 flex items-center justify-center backdrop-blur-sm"
+          className="absolute -bottom-4 -left-4 w-10 h-10 rounded-lg bg-dark-200/90 border border-gold-500/20 flex items-center justify-center shadow-md shadow-black/40"
           animate={{ y: [5, -5, 5] }}
           transition={{ duration: 3.5, repeat: Infinity }}
           style={{ transform: 'translateZ(30px)' }}
@@ -291,7 +294,7 @@ function TiltPhoto({ size = 'large' }) {
         </motion.div>
 
         <motion.div
-          className="absolute top-1/2 -left-10 w-8 h-8 rounded-full bg-dark-200 border border-gold-500/20 flex items-center justify-center backdrop-blur-sm"
+          className="absolute top-1/2 -left-10 w-8 h-8 rounded-full bg-dark-200/90 border border-gold-500/20 flex items-center justify-center shadow-md shadow-black/40"
           animate={{ x: [-3, 3, -3] }}
           transition={{ duration: 5, repeat: Infinity }}
           style={{ transform: 'translateZ(50px)' }}
@@ -299,11 +302,27 @@ function TiltPhoto({ size = 'large' }) {
           <span className="text-gold-500 text-xs">AI</span>
         </motion.div>
 
-        {/* صَلِّ عَلى اَلْحَبِيبْ ﷺ — typewriter */}
+        {/* صَلِّ عَلى اَلْحَبِيبْ ﷺ — typewriter (Responsive: under photo on mobile, beside photo on desktop) */}
         <motion.div
-          className="absolute top-[42%] -translate-y-1/2 pointer-events-none select-none flex flex-col items-center gap-1"
+          className="absolute pointer-events-none select-none flex flex-col items-center gap-1 z-20 whitespace-nowrap"
           dir="rtl"
-          style={{ right: '-11rem' }}
+          style={
+            size === 'small'
+              ? {
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  bottom: '-4.5rem',
+                  top: 'auto',
+                  right: 'auto',
+                }
+              : {
+                  right: '-8.5rem',
+                  top: '42%',
+                  transform: 'translateY(-50%)',
+                  left: 'auto',
+                  bottom: 'auto',
+                }
+          }
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
@@ -391,25 +410,21 @@ function MagneticName({ text }) {
   const springX = useSpring(x, { damping: 15, stiffness: 200 });
   const springY = useSpring(y, { damping: 15, stiffness: 200 });
 
-  // Glow position
-  const glowX = useMotionValue(50);
-
   const handleMouseMove = useCallback((e) => {
     const el = containerRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     const dx = e.clientX - centerX;
     const dy = e.clientY - centerY;
 
-    x.set(dx * 0.15);
-    y.set(dy * 0.2);
-
-    // Glow follows mouse
-    const gx = ((e.clientX - rect.left) / rect.width) * 100;
-    glowX.set(gx);
-  }, [x, y, glowX]);
+    if (isFinite(dx) && isFinite(dy)) {
+      x.set(dx * 0.15);
+      y.set(dy * 0.2);
+    }
+  }, [x, y]);
 
   const handleMouseLeave = useCallback(() => {
     x.set(0);
@@ -438,8 +453,8 @@ function MagneticName({ text }) {
       >
         {text}
       </span>
-      {/* Glow behind text on hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10 blur-2xl bg-gold-500/10 rounded-lg" />
+      {/* Subtle glow behind text on hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl bg-gold-500/10 rounded-lg pointer-events-none" />
     </motion.h1>
   );
 }
