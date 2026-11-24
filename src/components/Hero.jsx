@@ -231,44 +231,46 @@ function TiltPhoto({ size = 'large' }) {
           transformStyle: 'preserve-3d',
         }}
       >
-        {/* Rotating border */}
-        <motion.div
-          className={`absolute ${outerInset} rounded-full`}
-          style={{
-            background: 'conic-gradient(from 0deg, transparent, #D4A843, transparent, #D4A843, transparent)',
-            opacity: 0.3,
-          }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-        />
+       {/* Rotating border */}
+<motion.div
+  className={`absolute ${outerInset} rounded-full`}
+  style={{
+    background: 'conic-gradient(from 0deg, transparent, #D4A843, transparent, #D4A843, transparent)',
+    opacity: 0.3,
+  }}
+  animate={{ rotate: 360 }}
+  transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+/>
 
-        {/* Photo container */}
-        <div className={`relative ${sizeClasses} rounded-full bg-gradient-to-br from-dark-200 to-dark-500 border-2 border-gold-500/30 flex items-center justify-center overflow-hidden shadow-2xl shadow-gold-500/10`}>
-          {/* Profile Photo */}
-          <motion.img
-            src="/profile.jpg"
-            alt="Anes Sif Eddine Bousba"
-            className="w-full h-full object-cover object-[center_20%] scale-125 pointer-events-none"
-            style={{
-              transform: useTransform(
-                [sRotateX, sRotateY],
-                ([rx, ry]) => `scale(1.25) translate(${ry * 0.5}px, ${-rx * 0.5}px)`
-              ),
-            }}
-          />
+{/* Photo container */}
+<div
+  className={`relative ${sizeClasses} rounded-full bg-gradient-to-br from-dark-200 to-dark-500 border-2 border-gold-500/30 flex items-center justify-center overflow-hidden shadow-2xl shadow-gold-500/10`}
+>
+  {/* Profile Photo */}
+  <motion.img
+    src={`${import.meta.env.BASE_URL}profile.jpg`}
+    alt="Anes Sif Eddine Bousba"
+    className="w-full h-full object-cover object-[center_20%] scale-125 pointer-events-none"
+    style={{
+      transform: useTransform(
+        [sRotateX, sRotateY],
+        ([rx, ry]) => `scale(1.25) translate(${ry * 0.5}px, ${-rx * 0.5}px)`
+      ),
+    }}
+  />
 
-          {/* Glare effect */}
-          <motion.div
-            className="absolute inset-0 rounded-full pointer-events-none"
-            style={{
-              opacity: glareOpacity,
-              background: useTransform(
-                [glareX, glareY],
-                ([gx, gy]) => `radial-gradient(circle at ${gx}% ${gy}%, rgba(212,168,67,0.35) 0%, transparent 60%)`
-              ),
-            }}
-          />
-
+  {/* Glare effect */}
+  <motion.div
+    className="absolute inset-0 rounded-full pointer-events-none"
+    style={{
+      opacity: glareOpacity,
+      background: useTransform(
+        [glareX, glareY],
+        ([gx, gy]) =>
+          `radial-gradient(circle at ${gx}% ${gy}%, rgba(212,168,67,0.35) 0%, transparent 60%)`
+      ),
+    }}
+  />
           {/* Edge ring */}
           <div className="absolute inset-0 rounded-full ring-2 ring-gold-500/20 ring-inset pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-to-t from-dark-900/40 via-transparent to-transparent pointer-events-none" />
