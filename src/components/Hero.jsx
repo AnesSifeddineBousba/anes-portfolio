@@ -246,7 +246,7 @@ function TiltPhoto({ size = 'large' }) {
         <div className={`relative ${sizeClasses} rounded-full bg-gradient-to-br from-dark-200 to-dark-500 border-2 border-gold-500/30 flex items-center justify-center overflow-hidden shadow-2xl shadow-gold-500/10`}>
           {/* Profile Photo */}
           <motion.img
-            src="/profile.jpg"
+            src={${import.meta.env.BASE_URL}profile.jpg}
             alt="Anes Sif Eddine Bousba"
             className="w-full h-full object-cover object-[center_20%] scale-125 pointer-events-none"
             style={{
