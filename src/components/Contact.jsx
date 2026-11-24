@@ -3,9 +3,9 @@ import { motion, useInView } from 'framer-motion';
 import { Send, Mail, Github, Linkedin, CheckCircle, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
-const EMAIL = 'anassifeddine.bousba@unvi-bba.dz';
-const GITHUB = 'https://github.com/anassifeddinebousba-code';
-const LINKEDIN = 'https://www.linkedin.com/in/anas-sif-eddine-bousba-835727448';
+const EMAIL = 'anes.sifeddine.bousba@gmail.com';
+const GITHUB = 'https://github.com/AnesSifeddineBousba';
+const LINKEDIN = 'https://www.linkedin.com/in/αиєs-вσusba-835727448';
 
 export default function Contact() {
   const ref = useRef(null);
@@ -248,7 +248,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-white text-sm font-medium">GitHub</p>
-                    <p className="text-gray-500 text-xs font-mono">@anassifeddinebousba-code</p>
+                    <p className="text-gray-500 text-xs font-mono">@AnesSifeddineBousba (Αиєs_Вσusba)</p>
                   </div>
                 </a>
 
@@ -263,7 +263,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-white text-sm font-medium">LinkedIn</p>
-                    <p className="text-gray-500 text-xs font-mono">Anas Sif Eddine Bousba</p>
+                    <p className="text-gray-500 text-xs font-mono">Αиєs_Вσusba</p>
                   </div>
                 </a>
               </div>

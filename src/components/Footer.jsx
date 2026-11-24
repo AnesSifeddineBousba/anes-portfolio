@@ -2,8 +2,8 @@ import { Github, Linkedin, Heart } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import DigitalClock from './DigitalClock';
 
-const GITHUB = 'https://github.com/anassifeddinebousba-code';
-const LINKEDIN = 'https://www.linkedin.com/in/anas-sif-eddine-bousba-835727448';
+const GITHUB = 'https://github.com/AnesSifeddineBousba';
+const LINKEDIN = 'https://www.linkedin.com/in/αиєs-вσusba-835727448';
 
 export default function Footer() {
   const { t, dir } = useLanguage();

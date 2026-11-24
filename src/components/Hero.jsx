@@ -34,7 +34,7 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex lg:hidden justify-center items-center pb-16"
+            className="flex lg:hidden justify-center items-center pb-20"
           >
             <TiltPhoto size="small" />
           </motion.div>
@@ -306,12 +306,13 @@ function TiltPhoto({ size = 'large' }) {
         <motion.div
           className="absolute pointer-events-none select-none flex flex-col items-center gap-1 z-20 whitespace-nowrap"
           dir="rtl"
+          translate="no"
           style={
             size === 'small'
               ? {
                   left: '50%',
                   transform: 'translateX(-50%)',
-                  bottom: '-4.5rem',
+                  bottom: '-5.75rem',
                   top: 'auto',
                   right: 'auto',
                 }
@@ -380,13 +381,13 @@ function SallaTypeWriter() {
   }, [phase, text1, text2]);
 
   return (
-    <>
+    <div className="flex flex-col items-center gap-1">
       <span
         className="text-gold-500/90 text-sm font-arabic whitespace-nowrap tracking-wide block text-center min-h-[1.5em]"
         style={{ textShadow: '0 0 15px rgba(212,168,67,0.4)' }}
       >
-        {text1}
-        {(phase === 'type1' || phase === 'erase1') && <span className="cursor-blink" />}
+        <span>{text1}</span>
+        {(phase === 'type1' || phase === 'erase1') && <span className="cursor-blink" aria-hidden="true" />}
       </span>
       <span
         className="text-gold-500 text-2xl block text-center min-h-[1.5em]"
@@ -395,10 +396,10 @@ function SallaTypeWriter() {
           lineHeight: 1.2,
         }}
       >
-        {text2}
-        {(phase === 'type2' || phase === 'erase2') && <span className="cursor-blink" />}
+        <span>{text2}</span>
+        {(phase === 'type2' || phase === 'erase2') && <span className="cursor-blink" aria-hidden="true" />}
       </span>
-    </>
+    </div>
   );
 }
 
@@ -451,7 +452,7 @@ function MagneticName({ text }) {
           animation: 'shimmer 3s ease-in-out infinite',
         }}
       >
-        {text}
+        <span>{text}</span>
       </span>
       {/* Subtle glow behind text on hover */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl bg-gold-500/10 rounded-lg pointer-events-none" />
@@ -464,6 +465,12 @@ function TypeWriter({ text }) {
   const [displayed, setDisplayed] = useState('');
   const [index, setIndex] = useState(0);
   const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    setDisplayed('');
+    setIndex(0);
+    setDeleting(false);
+  }, [text]);
 
   useEffect(() => {
     const timer = setTimeout(
@@ -490,9 +497,9 @@ function TypeWriter({ text }) {
   }, [index, deleting, text]);
 
   return (
-    <span>
-      {displayed}
-      <span className="cursor-blink" />
+    <span className="inline-flex items-center">
+      <span>{displayed}</span>
+      <span className="cursor-blink" aria-hidden="true" />
     </span>
   );
 }

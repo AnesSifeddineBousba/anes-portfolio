@@ -78,7 +78,7 @@ export default function Navbar() {
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
-                {item.label}
+                <span>{item.label}</span>
                 {activeSection === item.id && (
                   <motion.div
                     layoutId="activeNav"

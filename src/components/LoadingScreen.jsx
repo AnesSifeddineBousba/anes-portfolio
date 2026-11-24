@@ -84,7 +84,7 @@ export default function LoadingScreen({ onComplete }) {
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  {t('loading.loading')}
+                  <span>{t('loading.loading')}</span>
                 </motion.p>
               </motion.div>
             )}
@@ -104,7 +104,7 @@ export default function LoadingScreen({ onComplete }) {
                   animate={{ letterSpacing: '0.1em', opacity: 1 }}
                   transition={{ duration: 1, ease: 'easeOut' }}
                 >
-                  {t('loading.welcome')}
+                  <span>{t('loading.welcome')}</span>
                 </motion.h1>
 
                 {/* Decorative line */}
