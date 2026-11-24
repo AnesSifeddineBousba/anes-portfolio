@@ -242,7 +242,7 @@ function TiltPhoto({ size = 'large' }) {
           transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
         />
 
-        {/* Photo container */}
+    {/* Photo container */}
 <div className={relative ${sizeClasses} rounded-full bg-gradient-to-br from-dark-200 to-dark-500 border-2 border-gold-500/30 flex items-center justify-center overflow-hidden shadow-2xl shadow-gold-500/10}>
   {/* Profile Photo */}
   <motion.img
@@ -256,6 +256,7 @@ function TiltPhoto({ size = 'large' }) {
       ),
     }}
   />
+        
           {/* Glare effect */}
           <motion.div
             className="absolute inset-0 rounded-full pointer-events-none"
