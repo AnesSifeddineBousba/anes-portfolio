@@ -243,16 +243,18 @@ function TiltPhoto({ size = 'large' }) {
 />
 
 {/* Photo container */}
-<div className={relative ${sizeClasses} rounded-full bg-gradient-to-br from-dark-200 to-dark-500 border-2 border-gold-500/30 flex items-center justify-center overflow-hidden shadow-2xl shadow-gold-500/10}>
+<div
+  className={`relative ${sizeClasses} rounded-full bg-gradient-to-br from-dark-200 to-dark-500 border-2 border-gold-500/30 flex items-center justify-center overflow-hidden shadow-2xl shadow-gold-500/10`}
+>
   {/* Profile Photo */}
   <motion.img
-    src={${import.meta.env.BASE_URL}profile.jpg}
+    src={`${import.meta.env.BASE_URL}profile.jpg`}
     alt="Anes Sif Eddine Bousba"
     className="w-full h-full object-cover object-[center_20%] scale-125 pointer-events-none"
     style={{
       transform: useTransform(
         [sRotateX, sRotateY],
-        ([rx, ry]) => scale(1.25) translate(${ry * 0.5}px, ${-rx * 0.5}px)
+        ([rx, ry]) => `scale(1.25) translate(${ry * 0.5}px, ${-rx * 0.5}px)`
       ),
     }}
   />
@@ -264,7 +266,8 @@ function TiltPhoto({ size = 'large' }) {
       opacity: glareOpacity,
       background: useTransform(
         [glareX, glareY],
-        ([gx, gy]) => radial-gradient(circle at ${gx}% ${gy}%, rgba(212,168,67,0.35) 0%, transparent 60%)
+        ([gx, gy]) =>
+          `radial-gradient(circle at ${gx}% ${gy}%, rgba(212,168,67,0.35) 0%, transparent 60%)`
       ),
     }}
   />
