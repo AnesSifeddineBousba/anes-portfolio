@@ -233,7 +233,7 @@ function TiltPhoto({ size = 'large' }) {
       >
        {/* Rotating border */}
 <motion.div
-  className={absolute ${outerInset} rounded-full}
+  className={`absolute ${outerInset} rounded-full`}
   style={{
     background: 'conic-gradient(from 0deg, transparent, #D4A843, transparent, #D4A843, transparent)',
     opacity: 0.3,
